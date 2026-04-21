@@ -2,8 +2,9 @@ import '../global.css';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useEffect } from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import { View } from 'react-native';
 import { useSession } from '@/data/session';
+import { BarberPoleLoader } from '@/ui/BarberPoleLoader';
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: 1, staleTime: 30_000 } },
@@ -24,8 +25,8 @@ function SessionGate() {
 
   if (loading) {
     return (
-      <View className="flex-1 bg-cream items-center justify-center">
-        <ActivityIndicator />
+      <View className="flex-1 bg-bg items-center justify-center">
+        <BarberPoleLoader />
       </View>
     );
   }

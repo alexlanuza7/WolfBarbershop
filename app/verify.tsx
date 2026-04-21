@@ -23,16 +23,18 @@ export default function Verify() {
   }
 
   return (
-    <View className="flex-1 bg-cream px-6 justify-center">
-      <Text className="text-ink text-2xl font-bold mb-2">Verificar</Text>
-      <Text className="text-ink/70 mb-6">Código enviado a {phone}</Text>
+    <View className="flex-1 bg-bg px-6 justify-center">
+      <Text className="text-ink text-2xl font-semibold mb-2">Verificar</Text>
+      <Text className="text-ink-muted text-sm mb-6">Código enviado a {phone}</Text>
       <TextInput
         value={token}
         onChangeText={setToken}
         keyboardType="number-pad"
-        className="border border-ink/20 rounded-lg px-4 py-3 mb-4 text-ink bg-white tracking-widest"
+        placeholder="000000"
+        placeholderTextColor="#6C6C68"
+        className="border border-border bg-surface-2 rounded-md px-4 py-3 mb-4 text-ink tracking-widest text-center text-2xl"
       />
-      <Button label={loading ? 'Verificando...' : 'Verificar'} onPress={onSubmit} disabled={loading} />
+      <Button label="Verificar" onPress={onSubmit} loading={loading} />
     </View>
   );
 }

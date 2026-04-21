@@ -21,17 +21,21 @@ export default function Login() {
   }
 
   return (
-    <View className="flex-1 bg-cream px-6 justify-center">
-      <Text className="text-ink text-2xl font-bold mb-2">Wolf Barbershop</Text>
-      <Text className="text-ink/70 mb-6">Introduce tu teléfono para recibir el código SMS</Text>
+    <View className="flex-1 bg-bg px-6 justify-center">
+      <Text className="text-ink text-4xl font-display mb-2">WOLF</Text>
+      <Text className="text-ink-muted text-base mb-8">Barbershop</Text>
+      <Text className="text-ink text-lg mb-2">Introduce tu teléfono</Text>
+      <Text className="text-ink-muted text-sm mb-4">Recibirás un código SMS</Text>
       <TextInput
         value={phone}
         onChangeText={setPhone}
         keyboardType="phone-pad"
         autoComplete="tel"
-        className="border border-ink/20 rounded-lg px-4 py-3 mb-4 text-ink bg-white"
+        placeholder="+34 600 000 000"
+        placeholderTextColor="#6C6C68"
+        className="border border-border bg-surface-2 rounded-md px-4 py-3 mb-4 text-ink"
       />
-      <Button label={loading ? 'Enviando...' : 'Enviar código'} onPress={onSubmit} disabled={loading} />
+      <Button label="Enviar código" onPress={onSubmit} loading={loading} />
     </View>
   );
 }

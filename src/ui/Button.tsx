@@ -1,26 +1,60 @@
-import { Pressable, Text } from 'react-native';
+import { Pressable, Text, ActivityIndicator, View } from 'react-native';
+
+type Variant = 'primary' | 'secondary' | 'ghost' | 'destructive';
+type Size = 'md' | 'sm';
 
 type Props = {
   label: string;
   onPress: () => void;
-  variant?: 'primary' | 'ghost';
+  variant?: Variant;
+  size?: Size;
   disabled?: boolean;
+  loading?: boolean;
+  accessibilityLabel?: string;
 };
 
-export function Button({ label, onPress, variant = 'primary', disabled = false }: Props) {
-  const base = 'rounded-2xl px-6 py-5 items-center justify-center';
-  const style = variant === 'primary' ? 'bg-ink' : 'bg-transparent border border-ink';
-  const text =
-    variant === 'primary'
-      ? 'text-cream text-lg font-semibold'
-      : 'text-ink text-lg font-semibold';
+const bgByVariant: Record<Variant, string> = {
+  primary: 'bg-pole-red',
+  secondary: 'bg-surface-2',
+  ghost: 'bg-transparent border border-border',
+  destructive: 'bg-destructive',
+};
+
+const textByVariant: Record<Variant, string> = {
+  primary: 'text-pole-white',
+  secondary: 'text-ink',
+  ghost: 'text-ink',
+  destructive: 'text-pole-white',
+};
+
+const sizeClass: Record<Size, string> = {
+  md: 'px-6 py-4',
+  sm: 'px-4 py-3',
+};
+
+export function Button({
+  label,
+  onPress,
+  variant = 'primary',
+  size = 'md',
+  disabled = false,
+  loading = false,
+  accessibilityLabel,
+}: Props) {
+  const isDisabled = disabled || loading;
   return (
     <Pressable
-      className={`${base} ${style} ${disabled ? 'opacity-50' : ''}`}
+      className={`rounded-md items-center justify-center ${bgByVariant[variant]} ${sizeClass[size]} ${isDisabled ? 'opacity-50' : ''}`}
       onPress={onPress}
-      disabled={disabled}
+      disabled={isDisabled}
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel ?? label}
+      accessibilityState={{ disabled: isDisabled, busy: loading }}
     >
-      <Text className={text}>{label}</Text>
+      <View className="flex-row items-center gap-2">
+        {loading ? <ActivityIndicator color="#FFFFFF" /> : null}
+        <Text className={`${textByVariant[variant]} text-base font-semibold`}>{label}</Text>
+      </View>
     </Pressable>
   );
 }

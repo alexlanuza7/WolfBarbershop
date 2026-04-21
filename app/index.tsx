@@ -1,7 +1,8 @@
 import { Redirect, type Href } from 'expo-router';
-import { View, ActivityIndicator } from 'react-native';
+import { View } from 'react-native';
 import { useSession } from '@/data/session';
 import { useCurrentRole } from '@/data/currentRole';
+import { BarberPoleLoader } from '@/ui/BarberPoleLoader';
 
 export default function Index() {
   const { session } = useSession();
@@ -9,8 +10,8 @@ export default function Index() {
 
   if (isLoading) {
     return (
-      <View className="flex-1 bg-cream items-center justify-center">
-        <ActivityIndicator />
+      <View className="flex-1 bg-bg items-center justify-center">
+        <BarberPoleLoader />
       </View>
     );
   }
