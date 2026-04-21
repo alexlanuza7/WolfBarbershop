@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react';
-import { View, Text, FlatList, Pressable, Alert } from 'react-native';
+import { View, Text, FlatList, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { useToast } from '@/ui/ToastProvider';
 import { useSession } from '@/data/session';
 import { useServices } from '@/data/services';
 import { useBarbers } from '@/data/barbers';
@@ -35,6 +36,7 @@ function formatSlot(iso: string) {
 export default function BookScreen() {
   const router = useRouter();
   const { session } = useSession();
+  const toast = useToast();
   const userId = session?.user.id;
 
   const [step, setStep] = useState<Step>(1);
@@ -71,10 +73,11 @@ export default function BookScreen() {
         starts_at: slot.starts_at,
         ends_at: slot.ends_at,
       });
+      toast.show({ variant: 'success', message: 'Reserva confirmada' });
       router.replace('/(client)' as never);
     } catch (e) {
       const msg = e instanceof Error ? e.message : 'Error inesperado';
-      Alert.alert('No se pudo reservar', msg);
+      toast.show({ variant: 'destructive', message: msg });
     }
   }
 

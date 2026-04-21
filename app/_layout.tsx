@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import { View } from 'react-native';
 import { useSession } from '@/data/session';
 import { BarberPoleLoader } from '@/ui/BarberPoleLoader';
+import { ToastProvider } from '@/ui/ToastProvider';
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: 1, staleTime: 30_000 } },
@@ -36,7 +37,9 @@ function SessionGate() {
 export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
-      <SessionGate />
+      <ToastProvider>
+        <SessionGate />
+      </ToastProvider>
     </QueryClientProvider>
   );
 }

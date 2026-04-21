@@ -1,4 +1,4 @@
-import { View, Text, FlatList, Pressable } from 'react-native';
+import { View, Text, FlatList, Pressable, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useMyAppointments } from '@/data/appointments';
@@ -19,7 +19,7 @@ function formatWhen(iso: string) {
 
 export default function ClientHome() {
   const router = useRouter();
-  const { data, isLoading } = useMyAppointments();
+  const { data, isLoading, isRefetching, refetch } = useMyAppointments();
   const upcoming = (data ?? []).filter(
     (a) => a.state !== 'cancelled' && a.state !== 'paid' && a.state !== 'no_show',
   );
@@ -46,6 +46,9 @@ export default function ClientHome() {
           data={upcoming}
           keyExtractor={(a) => a.id}
           contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 120, gap: 12 }}
+          refreshControl={
+            <RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} tintColor="#C0342B" />
+          }
           renderItem={({ item }) => (
             <Pressable className="bg-surface-1 border border-border rounded-md p-4">
               <View className="flex-row items-center justify-between">

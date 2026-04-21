@@ -86,7 +86,19 @@ export function useTransitionState() {
       if (error) throw error;
       return AppointmentSchema.parse(data);
     },
-    onSuccess: () => {
+    onMutate: async ({ id, next }) => {
+      await qc.cancelQueries({ queryKey: ['appointments'] });
+      const snapshots = qc.getQueriesData<Appointment[]>({ queryKey: ['appointments'] });
+      snapshots.forEach(([key, list]) => {
+        if (!list) return;
+        qc.setQueryData<Appointment[]>(key, list.map((a) => (a.id === id ? { ...a, state: next } : a)));
+      });
+      return { snapshots };
+    },
+    onError: (_err, _vars, ctx) => {
+      ctx?.snapshots.forEach(([key, list]) => qc.setQueryData(key, list));
+    },
+    onSettled: () => {
       qc.invalidateQueries({ queryKey: ['appointments'] });
     },
   });

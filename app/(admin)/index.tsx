@@ -1,8 +1,11 @@
 import { useMemo } from 'react';
-import { View, Text, FlatList } from 'react-native';
+import { View, Text, FlatList, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSession } from '@/data/session';
+import { useCurrentTenantId } from '@/data/tenant';
 import { useTenantDayAppointments } from '@/data/appointments';
 import { useServices } from '@/data/services';
+import { useRealtimeAppointments } from '@/data/useRealtimeAppointments';
 import { StateChip } from '@/ui/StateChip';
 import { BarberPoleLoader } from '@/ui/BarberPoleLoader';
 
@@ -17,8 +20,16 @@ function formatTime(iso: string) {
 
 export default function AdminHome() {
   const day = todayIso();
+  const { session } = useSession();
+  const tenantQ = useCurrentTenantId(session?.user.id);
   const apptsQ = useTenantDayAppointments(day);
   const servicesQ = useServices();
+
+  useRealtimeAppointments({
+    scope: 'tenant',
+    tenantId: tenantQ.data ?? undefined,
+    invalidate: [['appointments', 'tenant', day]],
+  });
 
   const priceByService = useMemo(() => {
     const map = new Map<string, number>();
@@ -62,6 +73,13 @@ export default function AdminHome() {
             data={appts}
             keyExtractor={(a) => a.id}
             contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 32, gap: 10 }}
+            refreshControl={
+              <RefreshControl
+                refreshing={apptsQ.isRefetching}
+                onRefresh={() => apptsQ.refetch()}
+                tintColor="#C0342B"
+              />
+            }
             ListEmptyComponent={
               <Text className="text-ink-muted text-center mt-8">Sin citas</Text>
             }
