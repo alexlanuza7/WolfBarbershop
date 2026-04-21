@@ -8,6 +8,7 @@ import { useServices } from '@/data/services';
 import { useRealtimeAppointments } from '@/data/useRealtimeAppointments';
 import { StateChip } from '@/ui/StateChip';
 import { BarberPoleLoader } from '@/ui/BarberPoleLoader';
+import { EmptyState } from '@/ui/EmptyState';
 
 function todayIso() {
   const d = new Date();
@@ -81,7 +82,9 @@ export default function AdminHome() {
               />
             }
             ListEmptyComponent={
-              <Text className="text-ink-muted text-center mt-8">Sin citas</Text>
+              <View className="mt-8">
+                <EmptyState icon="calendar" title="Sin citas hoy" />
+              </View>
             }
             renderItem={({ item }) => (
               <View className="bg-surface-1 border border-border rounded-md p-4 flex-row items-center justify-between">

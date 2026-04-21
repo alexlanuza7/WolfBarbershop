@@ -3,6 +3,7 @@ import { View, Text, TextInput, Alert } from 'react-native';
 import { router } from 'expo-router';
 import { Button } from '@/ui/Button';
 import { sendOtp } from '@/data/auth';
+import { WolfLogo, WolfWordmark } from '@/ui/WolfLogo';
 
 export default function Login() {
   const [phone, setPhone] = useState('+34');
@@ -22,8 +23,12 @@ export default function Login() {
 
   return (
     <View className="flex-1 bg-bg px-6 justify-center">
-      <Text className="text-ink text-4xl font-display mb-2">WOLF</Text>
-      <Text className="text-ink-muted text-base mb-8">Barbershop</Text>
+      <View className="items-center mb-10">
+        <WolfLogo size={96} />
+        <View className="mt-4">
+          <WolfWordmark />
+        </View>
+      </View>
       <Text className="text-ink text-lg mb-2">Introduce tu teléfono</Text>
       <Text className="text-ink-muted text-sm mb-4">Recibirás un código SMS</Text>
       <TextInput

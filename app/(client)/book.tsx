@@ -11,6 +11,8 @@ import { useCreateAppointment } from '@/data/appointments';
 import { useCurrentTenantId } from '@/data/tenant';
 import { Button } from '@/ui/Button';
 import { BarberPoleLoader } from '@/ui/BarberPoleLoader';
+import { PressableScale } from '@/ui/PressableScale';
+import { EmptyState } from '@/ui/EmptyState';
 import type { Service } from '@/domain/service';
 import type { Barber } from '@/domain/barber';
 
@@ -73,8 +75,14 @@ export default function BookScreen() {
         starts_at: slot.starts_at,
         ends_at: slot.ends_at,
       });
-      toast.show({ variant: 'success', message: 'Reserva confirmada' });
-      router.replace('/(client)' as never);
+      router.replace({
+        pathname: '/(client)/confirmed',
+        params: {
+          starts_at: slot.starts_at,
+          barber: barber.display_name,
+          service: service.name,
+        },
+      } as never);
     } catch (e) {
       const msg = e instanceof Error ? e.message : 'Error inesperado';
       toast.show({ variant: 'destructive', message: msg });
@@ -169,18 +177,17 @@ function ServiceList({
       renderItem={({ item }) => {
         const active = item.id === selectedId;
         return (
-          <Pressable
-            onPress={() => onSelect(item)}
-            className={`rounded-md border p-4 ${active ? 'border-pole-red bg-surface-2' : 'border-border bg-surface-1'}`}
-          >
-            <View className="flex-row items-center justify-between">
+          <PressableScale onPress={() => onSelect(item)}>
+            <View
+              className={`rounded-md border p-4 flex-row items-center justify-between ${active ? 'border-pole-red bg-surface-2' : 'border-border bg-surface-1'}`}
+            >
               <View>
                 <Text className="text-ink font-semibold text-base">{item.name}</Text>
                 <Text className="text-ink-muted mt-1">{item.duration_min} min</Text>
               </View>
               <Text className="text-ink font-semibold">{formatPrice(item.price_cents)}</Text>
             </View>
-          </Pressable>
+          </PressableScale>
         );
       }}
     />
@@ -207,17 +214,18 @@ function BarberList({
       renderItem={({ item }) => {
         const active = item.id === selectedId;
         return (
-          <Pressable
-            onPress={() => onSelect(item)}
-            className={`rounded-md border p-4 flex-row items-center gap-4 ${active ? 'border-pole-red bg-surface-2' : 'border-border bg-surface-1'}`}
-          >
-            <View className="w-12 h-12 rounded-full bg-surface-2 items-center justify-center">
-              <Text className="text-ink font-display text-lg">
-                {item.display_name.slice(0, 1).toUpperCase()}
-              </Text>
+          <PressableScale onPress={() => onSelect(item)}>
+            <View
+              className={`rounded-md border p-4 flex-row items-center gap-4 ${active ? 'border-pole-red bg-surface-2' : 'border-border bg-surface-1'}`}
+            >
+              <View className="w-12 h-12 rounded-full bg-surface-2 items-center justify-center">
+                <Text className="text-ink font-display text-lg">
+                  {item.display_name.slice(0, 1).toUpperCase()}
+                </Text>
+              </View>
+              <Text className="text-ink font-semibold text-base">{item.display_name}</Text>
             </View>
-            <Text className="text-ink font-semibold text-base">{item.display_name}</Text>
-          </Pressable>
+          </PressableScale>
         );
       }}
     />
@@ -238,11 +246,11 @@ function SlotGrid({
   if (loading) return <Centered><BarberPoleLoader /></Centered>;
   if (items.length === 0) {
     return (
-      <Centered>
-        <Text className="text-ink-muted text-center px-6">
-          No hay huecos disponibles hoy para este barbero.
-        </Text>
-      </Centered>
+      <EmptyState
+        icon="clock"
+        title="Sin huecos"
+        subtitle="No hay disponibilidad hoy para este barbero."
+      />
     );
   }
   return (
@@ -255,14 +263,17 @@ function SlotGrid({
       renderItem={({ item }) => {
         const active = item.starts_at === selectedStart;
         return (
-          <Pressable
-            onPress={() => onSelect(item)}
-            className={`flex-1 rounded-md border py-3 items-center ${active ? 'border-pole-red bg-pole-red' : 'border-border bg-surface-1'}`}
-          >
-            <Text className={`font-semibold ${active ? 'text-pole-white' : 'text-ink'}`}>
-              {formatSlot(item.starts_at)}
-            </Text>
-          </Pressable>
+          <View style={{ flex: 1 }}>
+            <PressableScale onPress={() => onSelect(item)}>
+              <View
+                className={`rounded-md border py-3 items-center ${active ? 'border-pole-red bg-pole-red' : 'border-border bg-surface-1'}`}
+              >
+                <Text className={`font-semibold ${active ? 'text-pole-white' : 'text-ink'}`}>
+                  {formatSlot(item.starts_at)}
+                </Text>
+              </View>
+            </PressableScale>
+          </View>
         );
       }}
     />

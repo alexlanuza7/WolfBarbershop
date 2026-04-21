@@ -1,10 +1,12 @@
-import { View, Text, FlatList, Pressable, RefreshControl } from 'react-native';
+import { View, Text, FlatList, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useMyAppointments } from '@/data/appointments';
 import { StateChip } from '@/ui/StateChip';
 import { Button } from '@/ui/Button';
 import { BarberPoleLoader } from '@/ui/BarberPoleLoader';
+import { EmptyState } from '@/ui/EmptyState';
+import { PressableScale } from '@/ui/PressableScale';
 
 function formatWhen(iso: string) {
   const d = new Date(iso);
@@ -36,11 +38,11 @@ export default function ClientHome() {
           <BarberPoleLoader />
         </View>
       ) : upcoming.length === 0 ? (
-        <View className="flex-1 items-center justify-center px-6">
-          <Text className="text-ink-muted text-center">
-            No tienes turnos. Reserva tu próximo corte.
-          </Text>
-        </View>
+        <EmptyState
+          icon="calendar"
+          title="Sin turnos"
+          subtitle="Reserva tu próximo corte con un toque."
+        />
       ) : (
         <FlatList
           data={upcoming}
@@ -50,12 +52,12 @@ export default function ClientHome() {
             <RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} tintColor="#C0342B" />
           }
           renderItem={({ item }) => (
-            <Pressable className="bg-surface-1 border border-border rounded-md p-4">
-              <View className="flex-row items-center justify-between">
+            <PressableScale>
+              <View className="bg-surface-1 border border-border rounded-md p-4 flex-row items-center justify-between">
                 <Text className="text-ink font-semibold text-base">{formatWhen(item.starts_at)}</Text>
                 <StateChip state={item.state} />
               </View>
-            </Pressable>
+            </PressableScale>
           )}
         />
       )}

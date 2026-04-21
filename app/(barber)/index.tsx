@@ -17,6 +17,7 @@ import { useBarberQueue, useTransitionState } from '@/data/appointments';
 import { useRealtimeAppointments } from '@/data/useRealtimeAppointments';
 import { StateChip } from '@/ui/StateChip';
 import { BarberPoleLoader } from '@/ui/BarberPoleLoader';
+import { EmptyState } from '@/ui/EmptyState';
 import { SwipeableRow } from '@/ui/SwipeableRow';
 import { useToast } from '@/ui/ToastProvider';
 import { nextStates, canTransition } from '@/domain/stateMachine';
@@ -123,9 +124,7 @@ export default function BarberHome() {
             <BarberPoleLoader />
           </View>
         ) : items.length === 0 ? (
-          <View className="flex-1 items-center justify-center px-6">
-            <Text className="text-ink-muted text-center">Sin citas para hoy</Text>
-          </View>
+          <EmptyState icon="scissors" title="Cola vacía" subtitle="No hay citas para hoy." />
         ) : (
           <FlatList
             data={items}

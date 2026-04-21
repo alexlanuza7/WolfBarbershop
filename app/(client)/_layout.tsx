@@ -5,6 +5,7 @@ export default function ClientLayout() {
     <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#0A0A0B' } }}>
       <Stack.Screen name="index" />
       <Stack.Screen name="book" />
+      <Stack.Screen name="confirmed" options={{ animation: 'fade' }} />
     </Stack>
   );
 }

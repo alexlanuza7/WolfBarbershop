@@ -8,7 +8,7 @@ const config: ExpoConfig = {
   scheme: 'wolfbarbershop',
   userInterfaceStyle: 'automatic',
   experiments: { typedRoutes: true },
-  plugins: ['expo-router'],
+  plugins: ['expo-router', 'expo-font'],
   ios: { bundleIdentifier: 'com.wolfbarbershop.app', supportsTablet: true },
   android: { package: 'com.wolfbarbershop.app' },
   web: { bundler: 'metro' },
