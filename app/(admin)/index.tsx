@@ -9,6 +9,7 @@ import { useRealtimeAppointments } from '@/data/useRealtimeAppointments';
 import { StateChip } from '@/ui/StateChip';
 import { BarberPoleLoader } from '@/ui/BarberPoleLoader';
 import { EmptyState } from '@/ui/EmptyState';
+import { AdminNav } from '@/ui/AdminNav';
 
 function todayIso() {
   const d = new Date();
@@ -95,6 +96,7 @@ export default function AdminHome() {
           />
         </>
       )}
+      <AdminNav />
     </SafeAreaView>
   );
 }
