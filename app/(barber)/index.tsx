@@ -34,6 +34,13 @@ function formatTime(iso: string) {
   return new Date(iso).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
 }
 
+function formatDayLong(iso: string) {
+  const d = new Date(iso + 'T00:00:00');
+  return d
+    .toLocaleDateString('es-ES', { weekday: 'long', day: '2-digit', month: 'long' })
+    .toUpperCase();
+}
+
 const ACTIVE: AppointmentState[] = ['in_chair', 'in_service'];
 const DIMMED: AppointmentState[] = ['paid', 'cancelled', 'no_show'];
 
@@ -59,6 +66,8 @@ export default function BarberHome() {
     if (aActive !== bActive) return aActive - bActive;
     return a.starts_at.localeCompare(b.starts_at);
   });
+
+  const activeCount = items.filter((i) => ACTIVE.includes(i.state)).length;
 
   function runTransition(appt: Appointment, target: AppointmentState, withUndo = false) {
     const prev = appt.state;
@@ -112,11 +121,55 @@ export default function BarberHome() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaView className="flex-1 bg-bg">
-        <View className="px-6 pt-4 pb-2">
-          <Text className="text-ink font-display text-4xl">COLA HOY</Text>
-          <Text className="text-ink-muted mt-1">
-            {items.length} {items.length === 1 ? 'cita' : 'citas'} · {day}
+        {/* Cabecera signage — tamaño grande para lectura a distancia (iPad 60-90cm) */}
+        <View className="px-6 pt-4 pb-5">
+          <View className="flex-row items-center gap-2 mb-2">
+            <View style={{ width: 6, height: 6, backgroundColor: '#C0342B' }} />
+            <Text className="text-ink-subtle text-xs tracking-widest uppercase">
+              {formatDayLong(day)}
+            </Text>
+          </View>
+          <Text
+            className="text-ink font-display-black uppercase"
+            style={{ fontSize: 56, lineHeight: 56, letterSpacing: 0.5 }}
+          >
+            Cola
           </Text>
+        </View>
+
+        {/* Contador editorial — 2 columnas, separador vertical */}
+        <View
+          className="flex-row mx-6"
+          style={{ borderTopWidth: 1, borderBottomWidth: 1, borderColor: '#2D2826' }}
+        >
+          <View className="flex-1 py-4">
+            <Text className="text-ink-subtle text-xs tracking-widest uppercase mb-1">
+              TOTAL
+            </Text>
+            <Text
+              className="text-ink font-display-black"
+              style={{ fontSize: 32, lineHeight: 32, fontVariant: ['tabular-nums'] }}
+            >
+              {items.length}
+            </Text>
+          </View>
+          <View style={{ width: 1, backgroundColor: '#2D2826' }} />
+          <View className="flex-1 py-4 pl-4">
+            <Text className="text-ink-subtle text-xs tracking-widest uppercase mb-1">
+              EN SILLA
+            </Text>
+            <Text
+              className="font-display-black"
+              style={{
+                color: activeCount > 0 ? '#C0342B' : '#F4F2F0',
+                fontSize: 32,
+                lineHeight: 32,
+                fontVariant: ['tabular-nums'],
+              }}
+            >
+              {activeCount}
+            </Text>
+          </View>
         </View>
 
         {loading ? (
@@ -129,7 +182,10 @@ export default function BarberHome() {
           <FlatList
             data={items}
             keyExtractor={(a) => a.id}
-            contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 32, gap: 10 }}
+            contentContainerStyle={{ paddingHorizontal: 0, paddingTop: 8, paddingBottom: 32 }}
+            ItemSeparatorComponent={() => (
+              <View style={{ height: 1, backgroundColor: '#2D2826' }} />
+            )}
             refreshControl={
               <RefreshControl
                 refreshing={queueQ.isRefetching}
@@ -146,16 +202,33 @@ export default function BarberHome() {
               const row = (
                 <Pressable
                   onPress={() => openActions(item)}
-                  className={`rounded-md border flex-row items-stretch ${isActive ? 'border-pole-red bg-surface-2' : 'border-border bg-surface-1'}`}
-                  style={{ opacity: isDimmed ? 0.5 : isBusy ? 0.6 : 1 }}
+                  accessibilityRole="button"
+                  style={{
+                    backgroundColor: isActive ? '#221E1D' : 'transparent',
+                    opacity: isDimmed ? 0.45 : isBusy ? 0.6 : 1,
+                  }}
                 >
-                  {isActive && <View className="w-1 bg-pole-red rounded-l-md" />}
-                  <View className="flex-1 p-4 flex-row items-center justify-between">
-                    <View>
-                      <Text className="text-ink text-lg font-semibold">{formatTime(item.starts_at)}</Text>
-                      <Text className="text-ink-muted text-sm mt-1">{item.id.slice(0, 8)}</Text>
+                  <View className="flex-row items-center py-5 px-6 gap-5">
+                    {/* Número de posición / hora — signage grande */}
+                    <Text
+                      className="font-display-black"
+                      style={{
+                        color: isActive ? '#C0342B' : '#F4F2F0',
+                        fontSize: 36,
+                        lineHeight: 36,
+                        minWidth: 96,
+                        fontVariant: ['tabular-nums'],
+                        letterSpacing: 0.5,
+                      }}
+                    >
+                      {formatTime(item.starts_at)}
+                    </Text>
+                    <View className="flex-1">
+                      <Text className="text-ink-subtle text-xs tracking-widest uppercase mb-1">
+                        REF · {item.id.slice(0, 6).toUpperCase()}
+                      </Text>
+                      <StateChip state={item.state} />
                     </View>
-                    <StateChip state={item.state} />
                   </View>
                 </Pressable>
               );

@@ -12,8 +12,8 @@ export type ToastInput = {
 export type ToastEntry = ToastInput & { id: number };
 
 type Ctx = {
-  show: (t: ToastInput) => number;
-  dismiss: (id: number) => void;
+  show: (_toast: ToastInput) => number;
+  dismiss: (_id: number) => void;
 };
 
 const ToastCtx = createContext<Ctx | null>(null);

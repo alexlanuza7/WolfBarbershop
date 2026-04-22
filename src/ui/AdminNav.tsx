@@ -12,7 +12,10 @@ export function AdminNav() {
   const router = useRouter();
   const pathname = usePathname();
   return (
-    <View className="flex-row border-t border-border bg-bg px-2 pt-2 pb-6">
+    <View
+      className="flex-row bg-bg px-2 pt-3 pb-6"
+      style={{ borderTopWidth: 1, borderTopColor: '#2D2826' }}
+    >
       {TABS.map((t) => {
         const active =
           t.path === '/(admin)'
@@ -23,11 +26,28 @@ export function AdminNav() {
             key={t.path}
             onPress={() => router.replace(t.path as never)}
             className="flex-1 items-center py-2"
+            accessibilityRole="button"
+            accessibilityLabel={t.label}
           >
+            {/* Indicador superior — barra pole-red solo activa */}
+            <View
+              style={{
+                height: 2,
+                width: 28,
+                backgroundColor: active ? '#C0342B' : 'transparent',
+                marginBottom: 8,
+              }}
+            />
             <Text
-              className={`text-xs font-semibold ${active ? 'text-pole-red' : 'text-ink-muted'}`}
+              style={{
+                color: active ? '#F4F2F0' : '#6E6A66',
+                fontFamily: 'Archivo-Bold',
+                fontSize: 11,
+                letterSpacing: 1.4,
+                textTransform: 'uppercase',
+              }}
             >
-              {t.label.toUpperCase()}
+              {t.label}
             </Text>
           </Pressable>
         );

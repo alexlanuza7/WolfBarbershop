@@ -8,6 +8,21 @@ module.exports = [
     ignores: ['node_modules/', '.expo/', 'dist/', 'web-build/', '.local/', 'supabase/'],
   },
   {
+    files: ['scripts/**/*.js'],
+    languageOptions: {
+      globals: {
+        __dirname: 'readonly',
+        __filename: 'readonly',
+        module: 'readonly',
+        require: 'readonly',
+        process: 'readonly',
+        console: 'readonly',
+        Buffer: 'readonly',
+      },
+      sourceType: 'commonjs',
+    },
+  },
+  {
     rules: {
       'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
     },

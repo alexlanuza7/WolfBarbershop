@@ -16,6 +16,15 @@ function todayIso() {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
+function formatDayLong(iso: string) {
+  const d = new Date(iso + 'T00:00:00');
+  return d.toLocaleDateString('es-ES', {
+    weekday: 'long',
+    day: '2-digit',
+    month: 'long',
+  }).toUpperCase();
+}
+
 function formatTime(iso: string) {
   return new Date(iso).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
 }
@@ -50,9 +59,20 @@ export default function AdminHome() {
 
   return (
     <SafeAreaView className="flex-1 bg-bg">
-      <View className="px-6 pt-4 pb-2">
-        <Text className="text-ink font-display text-3xl">WOLF BARBERSHOP</Text>
-        <Text className="text-ink-muted mt-1">{day}</Text>
+      {/* Cabecera editorial */}
+      <View className="px-6 pt-4 pb-6">
+        <View className="flex-row items-center gap-2 mb-2">
+          <View style={{ width: 6, height: 6, backgroundColor: '#C0342B' }} />
+          <Text className="text-ink-subtle text-xs tracking-widest uppercase">
+            PANEL · {formatDayLong(day)}
+          </Text>
+        </View>
+        <Text
+          className="text-ink font-display-black uppercase"
+          style={{ fontSize: 48, lineHeight: 48, letterSpacing: 0.5 }}
+        >
+          Hoy
+        </Text>
       </View>
 
       {loading ? (
@@ -61,20 +81,32 @@ export default function AdminHome() {
         </View>
       ) : (
         <>
-          <View className="px-6 pt-4 flex-row gap-3">
-            <Kpi title="Citas hoy" value={String(kpiTotal)} />
-            <Kpi title="En curso" value={String(kpiActive)} />
-            <Kpi title="Ingresos" value={`${(kpiRevenueCents / 100).toFixed(0)}€`} />
+          {/* KPIs tipo tablón — bloque de 3 columnas separadas por reglas */}
+          <View
+            className="flex-row mx-6"
+            style={{ borderTopWidth: 1, borderBottomWidth: 1, borderColor: '#2D2826' }}
+          >
+            <Kpi title="CITAS" value={String(kpiTotal)} />
+            <Divider />
+            <Kpi title="EN CURSO" value={String(kpiActive)} accent={kpiActive > 0} />
+            <Divider />
+            <Kpi title="INGRESOS" value={`${(kpiRevenueCents / 100).toFixed(0)}€`} />
           </View>
 
-          <Text className="text-ink-muted text-xs uppercase tracking-wide px-6 pt-6 pb-2">
-            Actividad del día
-          </Text>
+          <View className="px-6 pt-8 pb-3 flex-row items-center gap-2">
+            <View style={{ width: 4, height: 4, backgroundColor: '#6E6A66' }} />
+            <Text className="text-ink-subtle text-xs tracking-widest uppercase">
+              Actividad
+            </Text>
+          </View>
 
           <FlatList
             data={appts}
             keyExtractor={(a) => a.id}
-            contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 32, gap: 10 }}
+            contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 32 }}
+            ItemSeparatorComponent={() => (
+              <View style={{ height: 1, backgroundColor: '#2D2826' }} />
+            )}
             refreshControl={
               <RefreshControl
                 refreshing={apptsQ.isRefetching}
@@ -88,8 +120,14 @@ export default function AdminHome() {
               </View>
             }
             renderItem={({ item }) => (
-              <View className="bg-surface-1 border border-border rounded-md p-4 flex-row items-center justify-between">
-                <Text className="text-ink text-base font-semibold">{formatTime(item.starts_at)}</Text>
+              <View className="flex-row items-center py-4">
+                <Text
+                  className="text-ink font-display-black"
+                  style={{ fontSize: 22, lineHeight: 22, minWidth: 68 }}
+                >
+                  {formatTime(item.starts_at)}
+                </Text>
+                <View style={{ flex: 1 }} />
                 <StateChip state={item.state} />
               </View>
             )}
@@ -101,13 +139,25 @@ export default function AdminHome() {
   );
 }
 
-function Kpi({ title, value }: { title: string; value: string }) {
+function Kpi({ title, value, accent }: { title: string; value: string; accent?: boolean }) {
   return (
-    <View className="flex-1 bg-surface-1 border border-border rounded-md p-4">
-      <Text className="text-ink-muted text-xs uppercase tracking-wide">{title}</Text>
-      <Text className="text-ink font-display text-3xl mt-2" style={{ fontVariant: ['tabular-nums'] }}>
+    <View className="flex-1 py-5 items-start" style={{ paddingHorizontal: 4 }}>
+      <Text className="text-ink-subtle text-xs tracking-widest uppercase mb-2">{title}</Text>
+      <Text
+        className="font-display-black"
+        style={{
+          color: accent ? '#C0342B' : '#F4F2F0',
+          fontSize: 38,
+          lineHeight: 38,
+          fontVariant: ['tabular-nums'],
+        }}
+      >
         {value}
       </Text>
     </View>
   );
+}
+
+function Divider() {
+  return <View style={{ width: 1, backgroundColor: '#2D2826' }} />;
 }

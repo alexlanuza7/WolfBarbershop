@@ -1,19 +1,23 @@
 import { useFonts } from 'expo-font';
-import { Anton_400Regular } from '@expo-google-fonts/anton';
 import {
-  Inter_400Regular,
-  Inter_500Medium,
-  Inter_600SemiBold,
-  Inter_700Bold,
-} from '@expo-google-fonts/inter';
+  BigShouldersDisplay_700Bold,
+  BigShouldersDisplay_900Black,
+} from '@expo-google-fonts/big-shoulders-display';
+import {
+  Archivo_400Regular,
+  Archivo_500Medium,
+  Archivo_600SemiBold,
+  Archivo_700Bold,
+} from '@expo-google-fonts/archivo';
 
 export function useAppFonts() {
   const [loaded] = useFonts({
-    Anton: Anton_400Regular,
-    Inter: Inter_400Regular,
-    'Inter-Medium': Inter_500Medium,
-    'Inter-SemiBold': Inter_600SemiBold,
-    'Inter-Bold': Inter_700Bold,
+    'BigShoulders-Bold': BigShouldersDisplay_700Bold,
+    'BigShoulders-Black': BigShouldersDisplay_900Black,
+    Archivo: Archivo_400Regular,
+    'Archivo-Medium': Archivo_500Medium,
+    'Archivo-SemiBold': Archivo_600SemiBold,
+    'Archivo-Bold': Archivo_700Bold,
   });
   return loaded;
 }

@@ -93,13 +93,37 @@ export default function BookScreen() {
     <SafeAreaView className="flex-1 bg-bg">
       <View className="px-6 pt-4 pb-2 flex-row items-center justify-between">
         <Pressable onPress={back} accessibilityRole="button" accessibilityLabel="Volver">
-          <Text className="text-ink-muted text-base">← Volver</Text>
+          <Text className="text-ink-muted text-sm tracking-widest uppercase">← Volver</Text>
         </Pressable>
-        <Text className="text-ink-muted">{step} / 3</Text>
+        <Text className="text-ink-subtle text-xs tracking-widest uppercase">
+          PASO {step} / 3
+        </Text>
       </View>
 
-      <View className="px-6 pb-4">
-        <Text className="text-ink font-display text-3xl">{title}</Text>
+      {/* Barra de progreso signage — 3 bloques */}
+      <View className="flex-row px-6 gap-1 pt-2 pb-6">
+        {[1, 2, 3].map((n) => (
+          <View
+            key={n}
+            style={{
+              flex: 1,
+              height: 3,
+              backgroundColor: n <= step ? '#C0342B' : '#2D2826',
+            }}
+          />
+        ))}
+      </View>
+
+      <View className="px-6 pb-6">
+        <Text className="text-ink-subtle text-xs tracking-widest uppercase mb-2">
+          {step === 1 ? 'Servicio' : step === 2 ? 'Barbero' : 'Hueco'}
+        </Text>
+        <Text
+          className="text-ink font-display-black uppercase"
+          style={{ fontSize: 40, lineHeight: 40 }}
+        >
+          {title}
+        </Text>
       </View>
 
       {step === 1 && (
@@ -166,26 +190,50 @@ function ServiceList({
   loading: boolean;
   items: Service[];
   selectedId?: string;
-  onSelect: (s: Service) => void;
+  onSelect: (_service: Service) => void;
 }) {
   if (loading) return <Centered><BarberPoleLoader /></Centered>;
   return (
     <FlatList
       data={items}
       keyExtractor={(s) => s.id}
-      contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 140, gap: 10 }}
+      contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 140 }}
+      ItemSeparatorComponent={() => (
+        <View style={{ height: 1, backgroundColor: '#2D2826' }} />
+      )}
       renderItem={({ item }) => {
         const active = item.id === selectedId;
         return (
           <PressableScale onPress={() => onSelect(item)}>
             <View
-              className={`rounded-md border p-4 flex-row items-center justify-between ${active ? 'border-pole-red bg-surface-2' : 'border-border bg-surface-1'}`}
+              className={`flex-row items-center gap-4 py-5 pr-2`}
+              style={{ backgroundColor: active ? '#221E1D' : 'transparent' }}
             >
-              <View>
-                <Text className="text-ink font-semibold text-base">{item.name}</Text>
-                <Text className="text-ink-muted mt-1">{item.duration_min} min</Text>
+              {/* Marcador activo — barra vertical pole-red solo en seleccionado */}
+              <View
+                style={{
+                  width: 3,
+                  alignSelf: 'stretch',
+                  backgroundColor: active ? '#C0342B' : 'transparent',
+                }}
+              />
+              <View className="flex-1">
+                <Text
+                  className="text-ink font-display uppercase"
+                  style={{ fontSize: 22, lineHeight: 24, letterSpacing: 0.5 }}
+                >
+                  {item.name}
+                </Text>
+                <Text className="text-ink-muted text-sm mt-1 tracking-wide">
+                  {item.duration_min} MIN
+                </Text>
               </View>
-              <Text className="text-ink font-semibold">{formatPrice(item.price_cents)}</Text>
+              <Text
+                className="text-ink font-display-black"
+                style={{ fontSize: 24, lineHeight: 24 }}
+              >
+                {formatPrice(item.price_cents)}
+              </Text>
             </View>
           </PressableScale>
         );
@@ -203,27 +251,65 @@ function BarberList({
   loading: boolean;
   items: Barber[];
   selectedId?: string;
-  onSelect: (b: Barber) => void;
+  onSelect: (_barber: Barber) => void;
 }) {
   if (loading) return <Centered><BarberPoleLoader /></Centered>;
   return (
     <FlatList
       data={items}
       keyExtractor={(b) => b.id}
-      contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 140, gap: 10 }}
+      contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 140 }}
+      ItemSeparatorComponent={() => (
+        <View style={{ height: 1, backgroundColor: '#2D2826' }} />
+      )}
       renderItem={({ item }) => {
         const active = item.id === selectedId;
+        const initial = item.display_name.slice(0, 1).toUpperCase();
         return (
           <PressableScale onPress={() => onSelect(item)}>
             <View
-              className={`rounded-md border p-4 flex-row items-center gap-4 ${active ? 'border-pole-red bg-surface-2' : 'border-border bg-surface-1'}`}
+              className="flex-row items-center gap-4 py-5 pr-2"
+              style={{ backgroundColor: active ? '#221E1D' : 'transparent' }}
             >
-              <View className="w-12 h-12 rounded-full bg-surface-2 items-center justify-center">
-                <Text className="text-ink font-display text-lg">
-                  {item.display_name.slice(0, 1).toUpperCase()}
+              <View
+                style={{
+                  width: 3,
+                  alignSelf: 'stretch',
+                  backgroundColor: active ? '#C0342B' : 'transparent',
+                }}
+              />
+              {/* Avatar monogramado — cuadrado, sin redondeados */}
+              <View
+                style={{
+                  width: 52,
+                  height: 52,
+                  backgroundColor: active ? '#C0342B' : '#171514',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Text
+                  className="font-display-black"
+                  style={{
+                    color: active ? '#FFFFFF' : '#F4F2F0',
+                    fontSize: 28,
+                    lineHeight: 28,
+                  }}
+                >
+                  {initial}
                 </Text>
               </View>
-              <Text className="text-ink font-semibold text-base">{item.display_name}</Text>
+              <View className="flex-1">
+                <Text
+                  className="text-ink font-display uppercase"
+                  style={{ fontSize: 22, lineHeight: 24, letterSpacing: 0.5 }}
+                >
+                  {item.display_name}
+                </Text>
+                <Text className="text-ink-subtle text-xs tracking-widest uppercase mt-1">
+                  BARBERO
+                </Text>
+              </View>
             </View>
           </PressableScale>
         );
@@ -241,7 +327,7 @@ function SlotGrid({
   loading: boolean;
   items: Slot[];
   selectedStart?: string;
-  onSelect: (s: Slot) => void;
+  onSelect: (_slot: Slot) => void;
 }) {
   if (loading) return <Centered><BarberPoleLoader /></Centered>;
   if (items.length === 0) {
@@ -259,16 +345,30 @@ function SlotGrid({
       keyExtractor={(s) => s.starts_at}
       numColumns={3}
       contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 140 }}
-      columnWrapperStyle={{ gap: 8, marginBottom: 8 }}
+      columnWrapperStyle={{ gap: 6, marginBottom: 6 }}
       renderItem={({ item }) => {
         const active = item.starts_at === selectedStart;
         return (
           <View style={{ flex: 1 }}>
             <PressableScale onPress={() => onSelect(item)}>
               <View
-                className={`rounded-md border py-3 items-center ${active ? 'border-pole-red bg-pole-red' : 'border-border bg-surface-1'}`}
+                style={{
+                  paddingVertical: 18,
+                  alignItems: 'center',
+                  backgroundColor: active ? '#C0342B' : '#171514',
+                  borderWidth: 1,
+                  borderColor: active ? '#C0342B' : '#2D2826',
+                }}
               >
-                <Text className={`font-semibold ${active ? 'text-pole-white' : 'text-ink'}`}>
+                <Text
+                  className="font-display-black"
+                  style={{
+                    color: active ? '#FFFFFF' : '#F4F2F0',
+                    fontSize: 22,
+                    lineHeight: 22,
+                    letterSpacing: 0.5,
+                  }}
+                >
                   {formatSlot(item.starts_at)}
                 </Text>
               </View>

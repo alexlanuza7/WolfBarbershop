@@ -44,12 +44,11 @@ export function BarberPoleLoader({ size = 48, accessibilityLabel = 'Cargando' }:
       accessibilityLabel={accessibilityLabel}
       style={{
         width: size,
-        height: stripeHeight,
-        borderRadius: size / 2,
+        height: stripeHeight * 1.4,
         overflow: 'hidden',
-        backgroundColor: '#0A0A0B',
-        borderWidth: 2,
-        borderColor: '#2A2A2E',
+        backgroundColor: '#0B0A0A',
+        borderWidth: 1,
+        borderColor: '#2D2826',
       }}
     >
       <Animated.View
@@ -61,11 +60,11 @@ export function BarberPoleLoader({ size = 48, accessibilityLabel = 'Cargando' }:
         }}
       >
         {Array.from({ length: 12 }).map((_, i) => {
-          const color = ['#C0342B', '#FFFFFF', '#1F3A8A'][i % 3];
+          const color = ['#C0342B', '#F4F2F0', '#1F3A8A'][i % 3];
           return (
             <View
               key={i}
-              style={{ flex: 1, backgroundColor: color, height: '140%', marginTop: -4 }}
+              style={{ flex: 1, backgroundColor: color, height: '160%', marginTop: -6 }}
             />
           );
         })}
